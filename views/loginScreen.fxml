@@ -55,7 +55,7 @@
             </Label>
             <Pane layoutY="21.0" prefHeight="360.0" prefWidth="641.0" styleClass="bg" stylesheets="@../style/main.css">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#404040" height="237.0" layoutX="135.0" layoutY="52.0" opacity="0.4" stroke="BLACK" strokeType="INSIDE" width="378.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#404040" height="237.0" layoutX="135.0" layoutY="52.0" opacity="0.3" stroke="BLACK" strokeType="INSIDE" styleClass="rec" width="378.0" />
                   <TextField fx:id="loginField" layoutX="213.0" layoutY="87.0" prefHeight="24.0" prefWidth="215.0" promptText="Insira seu login" styleClass="geral" />
                   <Label layoutX="300.0" layoutY="68.0" prefHeight="19.0" prefWidth="41.0" text="Login">
                      <font>

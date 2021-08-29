@@ -32,13 +32,14 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.appScreenController">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.adminScreenController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
@@ -48,39 +49,57 @@
                      <children>
                         <Label alignment="CENTER" prefHeight="40.0" prefWidth="188.0" style="-fx-background-color: #404040;" text="Menu" textFill="#fff8e7">
                            <font>
-                              <Font size="20.0" />
+                              <Font size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="homeButton" alignment="CENTER" layoutY="40.0" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Home">
+                        <Label fx:id="homeButton" alignment="CENTER" layoutY="40.0" onMouseClicked="#changeMainPanel" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Home">
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </Label>
-                        <Label fx:id="cadastroButton" alignment="CENTER" layoutY="75.0" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Cadastro">
+                        <Label fx:id="cadastroButton" alignment="CENTER" layoutY="75.0" onMouseClicked="#changeMainPanel" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Cadastro">
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </Label>
-                        <Label fx:id="membrosButton" alignment="CENTER" layoutY="110.0" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Membros">
+                        <Label fx:id="membrosButton" alignment="CENTER" layoutY="110.0" onMouseClicked="#changeMainPanel" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Membros">
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </Label>
-                        <Label fx:id="eventosButton" alignment="CENTER" layoutY="180.0" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Eventos">
+                        <Label fx:id="eventosButton" alignment="CENTER" layoutY="180.0" onMouseClicked="#changeMainPanel" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Eventos">
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </Label>
-                        <Label fx:id="acervoButton" alignment="CENTER" layoutY="145.0" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Acervo">
+                        <Label fx:id="acervoButton" alignment="CENTER" layoutY="145.0" onMouseClicked="#changeMainPanel" onMouseEntered="#changeColorEnter" onMouseExited="#changeColorExit" prefHeight="35.0" prefWidth="188.0" styleClass="menuBut" stylesheets="@../style/main.css" text="Acervo">
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
                         </Label>
                      </children>
                   </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="424.0" style="-fx-background-color: #c1c1c1;">
+                <AnchorPane fx:id="mainPanel" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="424.0" style="-fx-background-color: #c1c1c1;">
                      <children>
-                        <Label fx:id="windowTitle" prefHeight="40.0" prefWidth="444.0" />
+                        <Label fx:id="windowTitle" alignment="CENTER" prefHeight="40.0" prefWidth="444.0" styleClass="geral" stylesheets="@../style/main.css" text="Home">
+                           <font>
+                              <Font size="24.0" />
+                           </font></Label>
                      </children></AnchorPane>
               </items>
             </SplitPane>

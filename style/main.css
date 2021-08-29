@@ -5,10 +5,6 @@ cosmicLatte: #FFF8E7;
 lightGray: #c1c1c1; 
 */
 
-label{
-    -fx-background-color: #404040;
-}
-
 .bg{
     -fx-background-color: #c1c1c1;
 
@@ -33,6 +29,42 @@ label{
     -fx-border-color: #c1c1c1;
 }
 
+
+.rec{
+    -fx-fill: #464A50;
+    -fx-opacity: 0.3;
+    -fx-stroke: black;
+    -fx-stroke-width: 1.5px;
+    -fx-arc-height: 20px;
+    -fx-arc-width:  25px;
+}
+
+.table-view{
+    -fx-text-fill: #FFF8E7;
+}
+
+.table-column{
+    -fx-background-color: #f3f3f3;
+    -fx-font-size: 12px;
+}
+
+.table-row-cell:selected .text {
+        -fx-fill: red;
+}
+
+.column-header{
+    -fx-background-color: #BBBBBB;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.scroll-bar{
+    -fx-background-color :transparent;
+    -fx-border-color :transparent;
+    -fx-background-radius : 0.0em;
+    -fx-border-radius :2.0em;
+}
+
 .choice-box > .label { 
     -fx-text-fill: white;
 }
@@ -55,4 +87,8 @@ label{
 
 .choice-box .menu-item:focused > .label { 
     -fx-text-fill: black; 
+}
+
+.grid Line {
+    -fx-stroke: #464A50;
 }
