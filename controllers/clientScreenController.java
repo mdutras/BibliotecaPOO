@@ -1,8 +1,9 @@
-package src;
+package controllers;
+
+import src.*;
 
 import java.util.Arrays;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javafx.event.EventHandler;
@@ -21,17 +22,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.SelectionMode;
-
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 public class clientScreenController {
     String state = "";

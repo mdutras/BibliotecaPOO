@@ -1,9 +1,9 @@
 package src;
 
 public class MaterialAlugado{
-    String code;
-    String dataAluguel;
-    MaterialAlugado(String code, String data){
+    public String code;
+    public String dataAluguel;
+    public MaterialAlugado(String code, String data){
         this.code = code;
         this.dataAluguel = data;
     }

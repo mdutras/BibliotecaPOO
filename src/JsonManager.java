@@ -41,7 +41,7 @@ public class JsonManager {
     }
 
     public static String getSenhaMembro(String login){
-        JSONObject file = new JSONObject(), cadastro, livroAlugado;
+        JSONObject file = new JSONObject(), cadastro;
         String password = "";
 		JSONParser parser = new JSONParser();
         try{
@@ -221,7 +221,7 @@ public class JsonManager {
     }
 
     public static void removerRequesicao(Requisicao req){
-        JSONObject evento = new JSONObject(), file;
+        JSONObject file;
         JSONParser parser = new JSONParser();
         FileWriter writeFile = null;
 
@@ -346,7 +346,7 @@ public class JsonManager {
     }
 
     static public void devolverMaterial(Material material){
-        JSONObject file = new JSONObject(), cadastro, materialAlugado = new JSONObject();
+        JSONObject file = new JSONObject(), cadastro;
 		JSONParser parser = new JSONParser();
         FileWriter writeFile = null;
         try{

@@ -1,7 +1,7 @@
 package src;
 
 public class Material extends Registro {
-    String autor, dataCadastro, estado, leitor;
+    public String autor, dataCadastro, estado, leitor;
 
     public Material(String nome, String autor, String categoria, String data, String leitor, String estado, String cod){
         this.path = "src/data/Membros.json";

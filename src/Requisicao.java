@@ -11,11 +11,11 @@ public class Requisicao extends Evento{
         }
     }
 
-    void rejeitado(){
+    public void rejeitado(){
         JsonManager.removerRequesicao(this);
     }
 
-    void aceito(){
+    public void aceito(){
         JsonManager.cadastroEvento(new Evento(
             this.nome, 
             this.requisitante, 

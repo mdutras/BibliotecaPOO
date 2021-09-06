@@ -1,4 +1,6 @@
-package src;
+package controllers;
+
+import src.*;
 
 import java.util.Arrays;
 

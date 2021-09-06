@@ -5,7 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class Registro {
-    String nome, categoria, cod, path;
+    public String nome, categoria, cod, path;
 
     void generateCode(){
         JSONParser parser = new JSONParser();

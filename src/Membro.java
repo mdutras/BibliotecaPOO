@@ -1,10 +1,10 @@
 package src;
 
 public class Membro {
-    String nome, login, categoria, estado;
-    MaterialAlugado alugado;
+    public String nome, login, categoria, estado;
+    public MaterialAlugado alugado;
 
-    Membro(String login, String nome, String categoria){
+    public Membro(String login, String nome, String categoria){
         this.login = login;
         this.nome = nome;
         this.categoria = categoria;
