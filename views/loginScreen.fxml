@@ -78,6 +78,7 @@
                         <String fx:value="textField" />
                      </styleClass></PasswordField>
                   <ChoiceBox fx:id="categoriaMenu" layoutX="249.0" layoutY="192.0" prefWidth="150.0" styleClass="geral" stylesheets="@../style/main.css" />
+                  <Label fx:id="warningLabel" layoutY="322.0" prefWidth="640.0" style="-fx-alignment: center; -fx-text-fill: red;" />
                </children>
             </Pane>
             <Label alignment="CENTER" layoutY="381.0" prefHeight="21.0" prefWidth="641.0" style="-fx-background-color: #404040;" text="Desenvolvido por Mateus Dutra Santiago &lt;3" textFill="#fff8e7">

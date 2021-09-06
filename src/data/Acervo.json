@@ -1,10 +1,1 @@
-{
-    "ROM0302":{
-        "nome":"15 dias",
-        "autores":"Martíns Vitor",
-        "categoria":"Romance",
-        "dataCadstro":"15/07/2019",
-        "estado":"Disponível",
-        "descricao":"Romance"
-    }
-}
+{"ROM0302":{"estado":"Alugado","dataCadstro":"15\/07\/2019","categoria":"Romance","nome":"15 dias","autores":"Martíns Vitor","leitor":"geni"},"ROM0345":{"estado":"Disponível","categoria":"Romance","nome":"Todo dia","leitor":"","dataCadastro":"2021-09-05","autor":"David Levithan"}}

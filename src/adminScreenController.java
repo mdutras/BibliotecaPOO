@@ -1,11 +1,10 @@
 package src;
 
 import java.util.Arrays;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -22,7 +21,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.Cursor;
@@ -34,8 +32,8 @@ import javafx.scene.control.SelectionMode;
 
 public class adminScreenController {
 
-    String state = "homeButton";
-    int position = 0;
+    String state = "";
+    String login = "";
 
     @FXML
     private Label homeButton;
@@ -55,30 +53,36 @@ public class adminScreenController {
     @FXML
     private Label windowTitle;
 
+    public void setLogin(String login){
+        this.login = login;
+    }
+
+    public String getLogin(){
+        return this.login;
+    }
+
     Label paneLabel(String title){
         Label l = new Label(title);
         l.setLayoutX(0);
         l.setLayoutX(0);
         l.setPrefWidth(444);
         l.setPrefHeight(40);
-        l.getStyleClass().add("geral");
-        l.setStyle("-fx-font-size: 24px; -fx-text-alignment: center; -fx-background-radius: 0px;");
+        l.setStyle(" -fx-background-color: #404040;-fx-text-fill: #FFF8E7;-fx-font-size: 24px; -fx-text-alignment: center; -fx-background-radius: 0px;");
         l.setAlignment(Pos.CENTER);
         return l;
     }
 
     public void home(){
-        ArrayList<TableRow<String[]>> currentRowTbl = new ArrayList<>();
-        ArrayList<TableRow<String[]>> currentRowEv = new ArrayList<>();
 
         Label panelTitle = this.paneLabel("Home");
 
         int counter = 0;
-
-        Label welcome = new Label("Seja bem-vindo/a :)");
-        welcome.setLayoutX(139);
-        welcome.setLayoutY(50);
-        welcome.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        Label user = new Label("Usuário: " + getLogin());
+        user.setLayoutX(0);
+        user.setLayoutY(40);
+        user.setPrefWidth(mainPanel.getPrefWidth());
+        user.setAlignment(Pos.CENTER_RIGHT);
+        user.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
 
         Label tblTitle = new Label("Livros alugados");
         tblTitle.setLayoutX(152);
@@ -90,121 +94,187 @@ public class adminScreenController {
         evTitle.setLayoutY(238);
         evTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        TableView<String[]> tbl = new TableView<>();
+        TableView<Material> tbl = new TableView<>();
         tbl.setPrefWidth(425);
         tbl.setPrefHeight(111);
         tbl.setLayoutX(11);
         tbl.setLayoutY(109);
         tbl.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableViewSelectionModel<String[]> selectionModel = tbl.getSelectionModel();
+        TableViewSelectionModel<Material> selectionModel = tbl.getSelectionModel();
         selectionModel.setSelectionMode(SelectionMode.SINGLE);
 
-        for(TableColumn<String[], String> c:  Arrays.asList(
-            new TableColumn<String[], String>("Leitor"), 
-            new TableColumn<String[], String>("Livro"), 
-            new TableColumn<String[], String>("Estado"))
-        ){
-            int i = counter;
-            c.setCellValueFactory((s) -> {
-                String[] x = s.getValue();
-                return new SimpleStringProperty(x[i]);
-            });
-            tbl.getColumns().add(c);
-            counter++;
-        }
-
-        tbl.setRowFactory(tableV -> {
-            TableRow<String[]> row = new TableRow<>();
-            
+        tbl.setRowFactory(t ->{
+            TableRow<Material>row = new TableRow<>();
             row.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent ev) {
                     if(ev.getClickCount() == 2){
-                        System.out.println("Cliquei duas vezes!");
-                        row.getStyleClass().add("selec");
-                        if(!currentRowTbl.isEmpty()){
-                            System.out.println("Dentro do if=> " + currentRowTbl.get(0));
-                            currentRowTbl.get(0).getStyleClass().remove("selec");
-                            currentRowTbl.remove(0);
-                        }
-                        System.out.println(row);
-                        currentRowTbl.add(row);
-
+                        devolucao(row.getItem());
                     }
+                    
                 }
             });
             return row;
         });
-        String[][] memberMatrix = {
-            {"Genivaldo", "A volta dos que não foram", "Disponível"},
-            {"Jurema", "Pooh 2", "Atrasado"},
-            {"Jurema", "Pooh 2", "Atrasado"},
-            {"Jurema", "Pooh 2", "Atrasado"},
-            {"Jurema", "Pooh 2", "Atrasado"}
-        };
-        ObservableList<String[]> memberData = FXCollections.observableArrayList();
-        memberData.addAll(Arrays.asList(memberMatrix));
-        tbl.setItems(memberData);
+
+        for(TableColumn<Material, String> c:  Arrays.asList(
+            new TableColumn<Material, String>("Livro"), 
+            new TableColumn<Material, String>("Estado"),
+            new TableColumn<Material, String>("Leitor")
+            )
+        ){
+            switch(counter){
+                case 0:
+                    c.setCellValueFactory(new PropertyValueFactory<>("nome"));
+                    break;
+                case 1:
+                    c.setCellValueFactory(new PropertyValueFactory<>("estado"));
+                    break;
+                case 2:
+                    c.setCellValueFactory(new PropertyValueFactory<>("leitor"));
+                    break;
+            }
+            counter++;
+            tbl.getColumns().add(c);
+        }
+
+        tbl.setItems(JsonManager.getAcervoAlugado());
 
         //Tabela de eventos
-        TableView<String[]> evs = new TableView<>();
+        TableView<Evento> evs = new TableView<>();
         evs.setPrefWidth(425);
         evs.setPrefHeight(111);
         evs.setLayoutX(11);
         evs.setLayoutY(258);
         evs.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         counter = 0;
-        for(TableColumn<String[], String> c:  Arrays.asList(
-            new TableColumn<String[], String>("Nome"), 
-            new TableColumn<String[], String>("Categoria"), 
-            new TableColumn<String[], String>("Data"))
+        for(TableColumn<Evento, String> c:  Arrays.asList(
+            new TableColumn<Evento, String>("Código"), 
+            new TableColumn<Evento, String>("Nome"), 
+            new TableColumn<Evento, String>("Categoria"))
         ){
-            int i = counter;
-            c.setCellValueFactory((s) -> {
-                String[] x = s.getValue();
-                return new SimpleStringProperty(x[i]);
-            });
+            switch(counter){
+                case 0:
+                    c.setCellValueFactory(new PropertyValueFactory<>("cod"));
+                    break;
+                case 1:
+                    c.setCellValueFactory(new PropertyValueFactory<>("nome"));
+                    break;
+                case 2:
+                    c.setCellValueFactory(new PropertyValueFactory<>("categoria"));
+                    break;
+            }
+            counter++;
             evs.getColumns().add(c);
+        }
+        evs.setItems(JsonManager.getAllEventos());
+
+
+        mainPanel.getChildren().addAll(panelTitle, user, tblTitle, evTitle, tbl, evs);
+    }
+
+    public void devolucao(Material material){
+        int counter = 0;
+        Rectangle recFundo = new Rectangle();
+        recFundo.setWidth(444);
+        recFundo.setHeight(358);
+        recFundo.setX(0);
+        recFundo.setY(40);
+        recFundo.setStyle("-fx-fill: #404040; -fx-opacity: 0.8;");
+
+        Rectangle recCadastro = new Rectangle();
+        recCadastro.setWidth(350);
+        recCadastro.setHeight(250);
+        recCadastro.setLayoutX(47);
+        recCadastro.setLayoutY(49);
+        recCadastro.setStyle("-fx-fill: #A6A6A6;");
+
+        Label title = new Label("Cadastro de Membro");
+        title.setStyle("-fx-text-fill: black; -fx-font-size: 16px; -fx-font-weight: bold;");
+        title.setLayoutX(133);
+        title.setLayoutY(59);
+
+        Label x = new Label("X");
+        x.setLayoutX(367);
+        x.setLayoutY(59);
+        x.setPrefWidth(20);
+        x.setPrefHeight(20);
+        x.setAlignment(Pos.CENTER);
+        x.setStyle("-fx-background-color: red; -fx-font-weight: bold; -fx-text-fill: white; -fx-text-alignment: center; -fx-cursor: hand;");
+        x.setCursor(Cursor.HAND);
+        x.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent ev) {
+                mainPanel.getChildren().clear();
+                home();
+            }
+        });
+
+        GridPane membrosGrid = new GridPane();
+        membrosGrid.setLayoutX(65);
+        membrosGrid.setLayoutY(84);
+        membrosGrid.setPrefWidth(300);
+        membrosGrid.setPrefHeight(100);
+        membrosGrid.setHgap(15);
+
+        membrosGrid.getColumnConstraints().addAll(
+            new ColumnConstraints(300*0.3),
+            new ColumnConstraints(300*0.7)
+        );
+
+        for(ColumnConstraints c: membrosGrid.getColumnConstraints()){
+            c.setHalignment(HPos.CENTER);
+        }
+
+        for(Label l: Arrays.asList(
+            new Label("Código"),
+            new Label("Estado"),
+            new Label("Leitor")
+        )){
+            l.setAlignment(Pos.CENTER_LEFT);
+            l.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: #A6B7B7;");
+            l.setPrefHeight(30);
+            l.setPrefWidth(300*0.3);
+            l.setWrapText(true);
+            membrosGrid.getRowConstraints().add(new RowConstraints(220*0.25));
+            membrosGrid.getRowConstraints().get(counter).setValignment(VPos.CENTER);
+            membrosGrid.add(l, 0, counter, 1, 1);
+            counter++;
+        }
+        counter = 0;
+        for(Label l: Arrays.asList(
+            new Label(material.cod),
+            new Label(material.estado),
+            new Label(material.leitor)
+        )){
+            l.setAlignment(Pos.CENTER_LEFT);
+            l.setStyle("-fx-text-fill: black; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: #A69595;");
+            l.setPrefHeight(20);
+            l.setWrapText(true);
+            l.setPrefHeight(220*0.15);
+            l.setPrefWidth(300*0.7);
+            membrosGrid.getRowConstraints().add(new RowConstraints(220*0.25));
+            membrosGrid.getRowConstraints().get(counter).setValignment(VPos.CENTER);
+            membrosGrid.add(l, 1, counter, 1, 1);
             counter++;
         }
 
-        evs.setRowFactory(tableV -> {
-            TableRow<String[]> row = new TableRow<>();
-            row.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent ev) {
-                    if(ev.getClickCount() == 2){
-                        System.out.println("Cliquei duas vezes! ");
-                        row.getStyleClass().add("selec");
-                        if(!currentRowEv.isEmpty()){
-                            System.out.println("Dentro do if=> " + currentRowEv.get(0));
-                            currentRowEv.get(0).getStyleClass().remove("selec");
-                            currentRowEv.remove(0);
-                        }
-                        System.out.println(row);
-                        currentRowEv.add(row);
-
-                    }
+        Button devolver = new Button("Devolver");
+        devolver.setPrefHeight(30);
+        devolver.setPrefWidth(160);
+        devolver.setLayoutX(151);
+        devolver.setLayoutY(260);
+        devolver.getStyleClass().add("geral");
+        devolver.setStyle("-fx-font-weight: bold;");
+        devolver.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent arg0) {
+                JsonManager.devolverMaterial(material);
+                mainPanel.getChildren().clear();
+                home();
                 }
             });
-            return row;
-        });
-
-        String[][] eventMatrix = 
-        {
-            {"Seminário sobre surdez", "Seminário", "12.03.12"},
-            {"Seminário sobre surdez", "Seminário", "12.03.12"},
-            {"Seminário sobre surdez", "Seminário", "12.03.12"},
-            {"Seminário sobre surdez", "Seminário", "12.03.12"},
-            {"Seminário sobre surdez", "Seminário", "12.03.12"},
-            {"Seminário sobre surdez", "Seminário", "12.03.12"}
-        };
-        ObservableList<String[]> eventData = FXCollections.observableArrayList();
-        eventData.addAll(Arrays.asList(eventMatrix));
-        evs.setItems(memberData);
-
-
-        mainPanel.getChildren().addAll(panelTitle, welcome, tblTitle, evTitle, tbl, evs);
+        mainPanel.getChildren().addAll(recFundo, recCadastro, x, title, membrosGrid, devolver);
     }
 
     public void membros(){
@@ -234,7 +304,8 @@ public class adminScreenController {
 
         for(TableColumn<Membro, String> c:  Arrays.asList(
             new TableColumn<Membro, String>("Nome"), 
-            new TableColumn<Membro, String>("Login"), 
+            new TableColumn<Membro, String>("Login"),
+            new TableColumn<Membro, String>("Categoria"), 
             new TableColumn<Membro, String>("Estado"))
         ){
             switch(counter){
@@ -245,6 +316,9 @@ public class adminScreenController {
                     c.setCellValueFactory(new PropertyValueFactory<>("login"));
                     break;
                 case 2:
+                    c.setCellValueFactory(new PropertyValueFactory<>("categoria"));
+                    break;
+                case 3:
                     c.setCellValueFactory(new PropertyValueFactory<>("estado"));
                     break;
             }
@@ -273,6 +347,10 @@ public class adminScreenController {
     
     public void cadastroMembros(){
         int counter = 0;
+        ArrayList<Boolean> forbid = new ArrayList<Boolean>();
+        for(int i = 0; i < 5; i++){
+            forbid.add(false);
+        }
         Rectangle recFundo = new Rectangle();
         recFundo.setWidth(444);
         recFundo.setHeight(358);
@@ -303,10 +381,8 @@ public class adminScreenController {
         x.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                for(int i = 1; i <= 6; i++){
-                    mainPanel.getChildren().remove(size - i);
-                }
+                mainPanel.getChildren().clear();
+                membros();
             }
         });
 
@@ -345,14 +421,36 @@ public class adminScreenController {
         }
         TextField nomeText = new TextField();
         nomeText.getStyleClass().add("geral");
-        nomeText.setStyle("-fx-border-radius: 5px; -fx-border-width: 1.5px; -fx-border-color: #FFF8E7;");
-        nomeText.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("textfield changed from " + oldValue + " to " + newValue);
+        nomeText.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(nomeText.getText().equals("")){
+                    nomeText.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(0, false);
+                }else{
+                    nomeText.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(0)){
+                        forbid.set(0, true);
+                    }
+                }
+            }
         });
         cadastroGrid.add(nomeText, 1, 0, 1, 1);
 
         TextField loginText = new TextField();
         loginText.getStyleClass().add("geral");
+        loginText.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(loginText.getText().equals("") || JsonManager.membroExists(loginText.getText())){
+                    loginText.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(1, false);
+                }else{
+                    loginText.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(1)){
+                        forbid.set(1, true);
+                    }
+                }
+            }
+        });
         cadastroGrid.add(loginText, 1, 1, 1, 1);
 
         ChoiceBox<String> c = new ChoiceBox<>();
@@ -360,15 +458,55 @@ public class adminScreenController {
             "Leitor",
             "Bibliotecário"
         );
+        c.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(c.getValue().equals("")){
+                    c.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(2, false);
+                }else{
+                    c.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(2)){
+                        forbid.set(2, true);
+                    }
+                }
+            }
+        });
         c.getStyleClass().add("geral");
         c.setPrefWidth(300*0.6);
         cadastroGrid.add(c, 1, 2, 1, 1);
         
         PasswordField senhaField = new PasswordField();
         senhaField.getStyleClass().add("geral");
+        senhaField.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(senhaField.getText().equals("")){
+                    senhaField.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(3, false);
+                }else{
+                    senhaField.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(3)){
+                        forbid.set(3, true);
+                    }
+                }
+            }
+        });
         cadastroGrid.add(senhaField, 1, 3, 1, 1);
+
         PasswordField senha2Field = new PasswordField();
         senha2Field.getStyleClass().add("geral");
+        senha2Field.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(senha2Field.getText().equals("") || !senha2Field.getText().equals(senhaField.getText())){
+                    senha2Field.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(4, false);
+                }else{
+                    senha2Field.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(4)){
+                        forbid.set(4, true);
+                    }
+                }
+            }
+        });
         cadastroGrid.add(senha2Field, 1, 4, 1, 1);
 
         Button cadastrar = new Button("Cadastrar");
@@ -381,14 +519,24 @@ public class adminScreenController {
         cadastrar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                System.out.println(c.getValue());
-                for(int i = 1; i <= 6; i++){
-                    mainPanel.getChildren().remove(size - i);
+                Boolean allow = true;
+                for(int i = 0; i < 5; i++){
+                    if(!forbid.get(i)){
+                        allow = false;
+                    }
+                }
+                if(allow){
+                    JsonManager.cadastroMembro(
+                    loginText.getText(), 
+                    nomeText.getText(), 
+                    senhaField.getText(),
+                    c.getValue()
+                );
+                mainPanel.getChildren().clear();
+                membros();
                 }
             }
         });
-
         mainPanel.getChildren().addAll(recFundo, recCadastro, x, title, cadastroGrid, cadastrar);
     }
 
@@ -424,10 +572,8 @@ public class adminScreenController {
         x.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                for(int i = 1; i <= 5; i++){
-                    mainPanel.getChildren().remove(size - i);
-                }
+                mainPanel.getChildren().clear();
+                membros();
             }
         });
 
@@ -448,13 +594,13 @@ public class adminScreenController {
         }
 
         for(Label l: Arrays.asList(
-            new Label("Nome"),
-            new Label("Login"),
-            new Label("Estado"),
-            new Label("Livros alugados")
+            new Label("Nome:"),
+            new Label("Login:"),
+            new Label("Estado:"),
+            new Label("Livros alugados:")
         )){
             l.setAlignment(Pos.CENTER_LEFT);
-            l.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: violet;");
+            l.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: #A6B7B7;");
             l.setPrefHeight(220*0.15);
             l.setPrefWidth(300*0.3);
             l.setWrapText(true);
@@ -470,7 +616,7 @@ public class adminScreenController {
             new Label(membro.estado)
         )){
             l.setAlignment(Pos.CENTER_LEFT);
-            l.setStyle("-fx-text-fill: white; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: blue;");
+            l.setStyle("-fx-text-fill: black; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: #A69595;");
             l.setPrefHeight(20);
             l.setWrapText(true);
             l.setPrefHeight(220*0.15);
@@ -488,7 +634,7 @@ public class adminScreenController {
         }
         Label l = new Label(text);
         l.setAlignment(Pos.CENTER_LEFT);
-            l.setStyle("-fx-text-fill: white; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: blue;");
+            l.setStyle("-fx-text-fill: black; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: #A69595;");
             l.setPrefHeight(20);
             l.setWrapText(true);
             l.setPrefHeight(220*0.15);
@@ -557,8 +703,8 @@ public class adminScreenController {
         cadastro.setStyle("-fx-font-weight: bold;");
         cadastro.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
-            public void handle(MouseEvent arg0) {
-                cadastroMembros();
+            public void handle(MouseEvent ev) {
+                cadastroMaterial();
                 System.out.println(mainPanel.getChildren().size());
             }
         });
@@ -568,6 +714,11 @@ public class adminScreenController {
 
     public void cadastroMaterial(){
         int counter = 0;
+        ArrayList<Boolean> forbid = new ArrayList<Boolean>();
+        for(int i = 0; i < 3; i++){
+            forbid.add(false);
+        }
+
         Rectangle recFundo = new Rectangle();
         recFundo.setWidth(444);
         recFundo.setHeight(358);
@@ -598,10 +749,8 @@ public class adminScreenController {
         x.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                for(int i = 1; i <= 6; i++){
-                    mainPanel.getChildren().remove(size - i);
-                }
+                mainPanel.getChildren().clear();
+                acervo();
             }
         });
 
@@ -624,9 +773,7 @@ public class adminScreenController {
         for(Label l: Arrays.asList(
             new Label("Nome"), 
             new Label("Autor(es)"), 
-            new Label("Categoria"), 
-            new Label("Descrição"),
-            new Label("Data de cadastro")
+            new Label("Categoria")
             )
         ){
             l.setAlignment(Pos.CENTER);
@@ -640,11 +787,37 @@ public class adminScreenController {
         }
         TextField nomeText = new TextField();
         nomeText.getStyleClass().add("geral");
+        nomeText.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(nomeText.getText().equals("")){
+                    nomeText.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(0, false);
+                }else{
+                    nomeText.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(0)){
+                        forbid.set(0, true);
+                    }
+                }
+            }
+        });
         cadastroGrid.add(nomeText, 1, 0, 1, 1);
 
-        TextField requestText = new TextField();
-        requestText.getStyleClass().add("geral");
-        cadastroGrid.add(requestText, 1, 1, 1, 1);
+        TextField autorText = new TextField();
+        autorText.getStyleClass().add("geral");
+        autorText.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(autorText.getText().equals("")){
+                    autorText.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(1, false);
+                }else{
+                    autorText.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(1)){
+                        forbid.set(1, true);
+                    }
+                }
+            }
+        });
+        cadastroGrid.add(autorText, 1, 1, 1, 1);
 
         ChoiceBox<String> c = new ChoiceBox<>();
         c.getItems().addAll(
@@ -657,14 +830,21 @@ public class adminScreenController {
             "História em Quadrinhos"
         );
         c.getStyleClass().add("geral");
+        c.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(c.getValue().equals("")){
+                    c.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(2, false);
+                }else{
+                    c.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(2)){
+                        forbid.set(2, true);
+                    }
+                }
+            }
+        });
         c.setPrefWidth(300*0.6);
         cadastroGrid.add(c, 1, 2, 1, 1);
-        TextArea descArea = new TextArea();
-        descArea.setStyle("-fx-control-inner-background:#404040;");
-        cadastroGrid.add(descArea, 1, 3, 1, 1);
-        DatePicker date = new DatePicker();
-        date.setStyle("-fx-control-inner-background:#404040;");
-        cadastroGrid.add(date, 1, 4, 1, 1);
 
         Button cadastrar = new Button("Cadastrar");
         cadastrar.setPrefHeight(30);
@@ -676,11 +856,24 @@ public class adminScreenController {
         cadastrar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                System.out.println(c.getValue());
-                for(int i = 1; i <= 6; i++){
-
-                    mainPanel.getChildren().remove(size - i);
+                Boolean allow = true;
+                for(int i = 0; i < 3; i++){
+                    if(!forbid.get(i)){
+                        allow = false;
+                    }
+                }
+                if(allow){
+                    JsonManager.cadastroMaterial(new Material(
+                        nomeText.getText(), 
+                        autorText.getText(), 
+                        c.getValue(), 
+                        LocalDate.now().toString(),
+                        "",
+                        "",
+                        ""
+                    ));
+                mainPanel.getChildren().clear();
+                acervo();
                 }
             }
         });
@@ -720,10 +913,8 @@ public class adminScreenController {
         x.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                for(int i = 1; i <= 5; i++){
-                    mainPanel.getChildren().remove(size - i);
-                }
+                mainPanel.getChildren().clear();
+                acervo();
             }
         });
 
@@ -744,13 +935,13 @@ public class adminScreenController {
         }
 
         for(Label l: Arrays.asList(
-            new Label("Código"),
-            new Label("Nome"),
-            new Label("Categoria"),
-            new Label("Estado")
+            new Label("Código:"),
+            new Label("Nome:"),
+            new Label("Categoria:"),
+            new Label("Estado:")
         )){
             l.setAlignment(Pos.CENTER_LEFT);
-            l.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: violet;");
+            l.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: #A6B7B7;");
             l.setPrefHeight(220*0.15);
             l.setPrefWidth(300*0.3);
             l.setWrapText(true);
@@ -767,7 +958,7 @@ public class adminScreenController {
             new Label(material.estado)
         )){
             l.setAlignment(Pos.CENTER_LEFT);
-            l.setStyle("-fx-text-fill: white; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: blue;");
+            l.setStyle("-fx-text-fill: black; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: #A69595;");
             l.setPrefHeight(20);
             l.setWrapText(true);
             l.setPrefHeight(220*0.15);
@@ -900,6 +1091,11 @@ public class adminScreenController {
     
     public void cadastroEvento(){
         int counter = 0;
+        ArrayList<Boolean> forbid = new ArrayList<Boolean>();
+        for(int i = 0; i < 4; i++){
+            forbid.add(false);
+        }
+
         Rectangle recFundo = new Rectangle();
         recFundo.setWidth(444);
         recFundo.setHeight(358);
@@ -929,10 +1125,8 @@ public class adminScreenController {
         x.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                for(int i = 1; i <= 6; i++){
-                    mainPanel.getChildren().remove(size - i);
-                }
+                mainPanel.getChildren().clear();
+                evento();
             }
         });
 
@@ -969,10 +1163,25 @@ public class adminScreenController {
         }
         TextField nomeText = new TextField();
         nomeText.getStyleClass().add("geral");
+        nomeText.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(nomeText.getText().equals("")){
+                    nomeText.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(0, false);
+                }else{
+                    nomeText.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(0)){
+                        forbid.set(0, true);
+                    }
+                }
+            }
+        });
         cadastroGrid.add(nomeText, 1, 0, 1, 1);
 
-        TextField requestText = new TextField();
-        requestText.getStyleClass().add("geral");
+        Label requestText = new Label(getLogin());
+        requestText.setAlignment(Pos.CENTER);
+        requestText.setStyle("-fx-text-fill: black; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-alignment: center;");
+        requestText.setWrapText(true);
         cadastroGrid.add(requestText, 1, 1, 1, 1);
 
         ChoiceBox<String> c = new ChoiceBox<>();
@@ -985,11 +1194,36 @@ public class adminScreenController {
             "Exposição",
             "Outros");
         c.getStyleClass().add("geral");
+        c.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(c.getValue().equals("")){
+                    c.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(2, false);
+                }else{
+                    c.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(2)){
+                        forbid.set(2, true);
+                    }
+                }
+            }
+        });
         c.setPrefWidth(300*0.6);
         cadastroGrid.add(c, 1, 2, 1, 1);
 
         DatePicker date = new DatePicker();
-        date.setStyle("-fx-control-inner-background:#404040;");
+        date.focusedProperty().addListener((ov, oldV, newV) -> {
+            if (!newV) {
+                if(date.getValue().toString().equals("")){
+                    date.setStyle("-fx-border-color: #e4000f;");
+                    forbid.set(3, false);
+                }else{
+                    date.setStyle("-fx-border-color: #39ff14;");
+                    if(!forbid.get(3)){
+                        forbid.set(3, true);
+                    }
+                }
+            }
+        });
         cadastroGrid.add(date, 1, 3, 1, 1);
 
         Button cadastrar = new Button("Cadastrar");
@@ -1002,12 +1236,23 @@ public class adminScreenController {
         cadastrar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                System.out.println(c.getValue());
-                for(int i = 1; i <= 6; i++){
-
-                    mainPanel.getChildren().remove(size - i);
+                Boolean allow = true;
+                for(int i = 0; i < 4; i++){
+                    if(!forbid.get(i)){
+                        allow = false;
+                    }
                 }
+                if(allow){
+                JsonManager.cadastroEvento(new Evento(
+                    nomeText.getText(),
+                    requestText.getText(),
+                    c.getValue(),
+                    date.getValue().toString(),
+                    ""
+                ));
+                mainPanel.getChildren().clear();
+                evento();
+            }
             }
         });
 
@@ -1046,10 +1291,8 @@ public class adminScreenController {
         x.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                for(int i = 1; i <= 5; i++){
-                    mainPanel.getChildren().remove(size - i);
-                }
+                mainPanel.getChildren().clear();
+                evento();
             }
         });
 
@@ -1076,7 +1319,7 @@ public class adminScreenController {
             new Label("Data:")
         )){
             l.setAlignment(Pos.CENTER_LEFT);
-            l.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: violet;");
+            l.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: #A6B7B7;");
             l.setPrefHeight(220*0.15);
             l.setPrefWidth(300*0.3);
             l.setWrapText(true);
@@ -1093,7 +1336,7 @@ public class adminScreenController {
             new Label(evento.dataEvento)
         )){
             l.setAlignment(Pos.CENTER_LEFT);
-            l.setStyle("-fx-text-fill: white; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: blue;");
+            l.setStyle("-fx-text-fill: black; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: #A69595;");
             l.setPrefHeight(20);
             l.setWrapText(true);
             l.setPrefHeight(220*0.15);
@@ -1117,7 +1360,7 @@ public class adminScreenController {
 
         Rectangle recCadastro = new Rectangle();
         recCadastro.setWidth(350);
-        recCadastro.setHeight(250);
+        recCadastro.setHeight(320);
         recCadastro.setLayoutX(47);
         recCadastro.setLayoutY(49);
         recCadastro.setStyle("-fx-fill: #A6A6A6;");
@@ -1138,10 +1381,8 @@ public class adminScreenController {
         x.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
-                int size = mainPanel.getChildren().size();
-                for(int i = 1; i <= 5; i++){
-                    mainPanel.getChildren().remove(size - i);
-                }
+                mainPanel.getChildren().clear();
+                evento();
             }
         });
 
@@ -1162,13 +1403,13 @@ public class adminScreenController {
         }
 
         for(Label l: Arrays.asList(
-            new Label("Nome do evento"),
-            new Label("Requisitante"),
-            new Label("Categoria"), 
-            new Label("Data")
+            new Label("Nome do evento:"),
+            new Label("Requisitante:"),
+            new Label("Categoria:"), 
+            new Label("Data:")
         )){
             l.setAlignment(Pos.CENTER_LEFT);
-            l.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: violet;");
+            l.setStyle("-fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 11px; -fx-text-alignment: left; -fx-background-color: #A6B7B7;");
             l.setPrefHeight(220*0.15);
             l.setPrefWidth(300*0.3);
             l.setWrapText(true);
@@ -1184,7 +1425,7 @@ public class adminScreenController {
             new Label(req.categoria), 
             new Label(req.dataEvento)
         )){
-            l.setStyle("-fx-text-fill: white; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: blue;");
+            l.setStyle("-fx-text-fill: black; -fx-font-size: 13px; -fx-text-alignment: center; -fx-background-color: #A69595;");
             l.setPrefHeight(20);
             l.setWrapText(true);
             l.setPrefHeight(220*0.15);
@@ -1194,11 +1435,38 @@ public class adminScreenController {
             eventosGrid.add(l, 1, counter, 1, 1);
             counter++;
         }
-        mainPanel.getChildren().addAll(recFundo, recCadastro, x, title, eventosGrid);
-    }
+        Button aceitar = new Button("Aceitar");
+        aceitar.setPrefHeight(30);
+        aceitar.setPrefWidth(120);
+        aceitar.setLayoutX(65);
+        aceitar.setLayoutY(319);
+        aceitar.getStyleClass().add("geral");
+        aceitar.setStyle("-fx-font-weight: bold; -fx-border-color: #39ff14;");
+        aceitar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent ev) {
+                req.aceito();
+                mainPanel.getChildren().clear();
+                evento();
+            }
+        });
 
-    public void initialize() {
-        this.home();
+        Button rejeitar = new Button("Rejeitar");
+        rejeitar.setPrefHeight(30);
+        rejeitar.setPrefWidth(120);
+        rejeitar.setLayoutX(245);
+        rejeitar.setLayoutY(319);
+        rejeitar.getStyleClass().add("geral");
+        rejeitar.setStyle("-fx-font-weight: bold; -fx-border-color: #e4000f;");
+        rejeitar.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent ev) {
+                req.rejeitado();
+                mainPanel.getChildren().clear();
+                evento();
+            }
+        });
+        mainPanel.getChildren().addAll(recFundo, recCadastro, x, title, eventosGrid, aceitar, rejeitar);
     }
 
     @FXML

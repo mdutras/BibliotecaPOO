@@ -13,7 +13,7 @@ public class Registro {
         try{
             JSONObject file = (JSONObject) parser.parse(new FileReader(this.path));
             do{
-                int random = (int) (Math.random() * Math.pow(10, 5));
+                int random = (int) ((Math.random() * (9999 - 1000)) + 1000);
                 c += String.valueOf(random);
             }while(file.get(c) != null);
         }catch(Exception e){

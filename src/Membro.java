@@ -2,16 +2,6 @@ package src;
 
 public class Membro {
     String nome, login, categoria, estado;
-
-    class MaterialAlugado{
-        String code;
-        String dataAluguel;
-        MaterialAlugado(String code, String data){
-            this.code = code;
-            this.dataAluguel = data;
-            
-        }
-    }
     MaterialAlugado alugado;
 
     Membro(String login, String nome, String categoria){

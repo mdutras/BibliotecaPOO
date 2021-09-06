@@ -1,17 +1,1 @@
-{
-    "geni": {
-        "nome":"Genivaldo",
-        "senha":"BatataDoce",
-        "materialAlugado":
-            {
-                "código":"ROM0302",
-                "data do aluguel":"13/05/2021"
-            }
-    },
-    "bibi":{
-        "nome":"Gabrielle",
-        "senha":"Un1córn10",
-        "materialAlugado":{}
-    }
-    
-}
+{"bibi":{"senha":"Un1córn10","categoria":"Leitor","materialAlugado":{},"nome":"Gabrielle"},"james":{"senha":"batata","categoria":"Bibliotecário","materialAlugado":{},"nome":"Matt"},"geni":{"senha":"a","categoria":"Leitor","materialAlugado":{"código":"ROM0302","dataAluguel":"13\/05\/2021"},"nome":"Genivaldo"}}

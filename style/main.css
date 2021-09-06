@@ -11,9 +11,9 @@ lightGray: #c1c1c1;
 }
 
 .geral{
-    -fx-background-color: red;
+    -fx-background-color: #404040;
     -fx-text-fill: #FFF8E7;
-    -fx-background-radius: 5px;
+    -fx-background-radius: 6px;
     -fx-border-radius: 5px;
     -fx-border-width: 1.5px;
     -fx-border-color: #FFF8E7;

@@ -1,6 +1,7 @@
 package src;
 
 import java.io.FileWriter;
+import java.time.LocalDate;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Set;
@@ -33,19 +34,35 @@ public class JsonManager {
             membro.estado = "Alugou livro";
             membro.setAlugado(
                 (String) livroAlugado.get("código"),
-                (String) livroAlugado.get("data do aluguel")
+                (String) livroAlugado.get("dataAluguel")
             );
         }
         return membro;
     }
 
-    public static void cadastroMembro(String login, String nome, String senha){
+    public static String getSenhaMembro(String login){
+        JSONObject file = new JSONObject(), cadastro, livroAlugado;
+        String password = "";
+		JSONParser parser = new JSONParser();
+        try{
+            file = (JSONObject) parser.parse(new FileReader("src/data/Membros.json"));
+            
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        cadastro = (JSONObject) file.get(login);
+        password = (String) cadastro.get("senha");
+        return password;
+    }
+
+    public static void cadastroMembro(String login, String nome, String senha, String categoria){
         JSONObject membro = new JSONObject();
         JSONParser parser = new JSONParser();
         FileWriter writeFile = null;
 
         membro.put("nome", nome);
         membro.put("senha", senha);
+        membro.put("categoria", categoria);
         membro.put("materialAlugado", new JSONObject());
         try{
             JSONObject file = (JSONObject) parser.parse(new FileReader("src/data/Membros.json"));
@@ -72,6 +89,21 @@ public class JsonManager {
             System.out.println(e);
         }
         return FXCollections.observableArrayList(membros);
+    }
+
+    public static Boolean membroExists(String login){
+        Boolean res = false;
+        JSONObject file = new JSONObject();
+		JSONParser parser = new JSONParser();
+        try{
+            file = (JSONObject) parser.parse(new FileReader("src/data/Membros.json"));
+            if(file.get(login) != null){
+                res = true;
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return res;
     }
 
     public static Evento getEvento(String code){
@@ -146,7 +178,7 @@ public class JsonManager {
         return FXCollections.observableArrayList(reqs);
     }
 
-    public static void cadastroEventoOrReq(Evento ev, Boolean isReq){
+    public static void cadastroEvento(Evento ev){
         JSONObject evento = new JSONObject(), file;
         JSONParser parser = new JSONParser();
         FileWriter writeFile = null;
@@ -154,20 +186,49 @@ public class JsonManager {
         evento.put("nome", ev.nome);
         evento.put("requisitante", ev.requisitante);
         evento.put("categoria", ev.categoria);
-        evento.put("data", ev.dataEvento);
+        evento.put("dataEvento", ev.dataEvento);
 
         try{
-            if(isReq){
-                file = (JSONObject) parser.parse(new FileReader("src/data/requisicaoEvento.json"));
-            }else{
-                file = (JSONObject) parser.parse(new FileReader("src/data/Eventos.json"));
-            }
+            file = (JSONObject) parser.parse(new FileReader("src/data/Eventos.json"));
             file.put(ev.cod, evento);
-            if(isReq){
-                writeFile = new FileWriter("src/data/requisicaoEvento.json");
-            }else{
-                writeFile = new FileWriter("src/data/Eventos.json");
-            }
+            writeFile = new FileWriter("src/data/Eventos.json");
+            writeFile.write(file.toJSONString());
+            writeFile.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void cadastroReq(Requisicao req){
+        JSONObject evento = new JSONObject(), file;
+        JSONParser parser = new JSONParser();
+        FileWriter writeFile = null;
+
+        evento.put("nome", req.nome);
+        evento.put("requisitante", req.requisitante);
+        evento.put("categoria", req.categoria);
+        evento.put("dataEvento", req.dataEvento);
+
+        try{
+            file = (JSONObject) parser.parse(new FileReader("src/data/requisicaoEvento.json"));
+            file.put(req.cod, evento);
+            writeFile = new FileWriter("src/data/requisicaoEvento.json");
+            writeFile.write(file.toJSONString());
+            writeFile.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void removerRequesicao(Requisicao req){
+        JSONObject evento = new JSONObject(), file;
+        JSONParser parser = new JSONParser();
+        FileWriter writeFile = null;
+
+        try{
+            file = (JSONObject) parser.parse(new FileReader("src/data/requisicaoEvento.json"));
+            file.remove(req.cod);
+            writeFile = new FileWriter("src/data/requisicaoEvento.json");
             writeFile.write(file.toJSONString());
             writeFile.close();
         }catch(Exception e){
@@ -186,13 +247,34 @@ public class JsonManager {
         }
         cadastro = (JSONObject) file.get(code);
         return new Material(
-            (String) cadastro.get("nome"),
-            (String) cadastro.get("autores"),
-            (String) cadastro.get("categoria"),
-            (String) cadastro.get("dataCadastro"),
-            (String) cadastro.get("estado"),
+            (String) cadastro.get("nome"), 
+            (String) cadastro.get("autor"), 
+            (String) cadastro.get("categoria"), 
+            (String) cadastro.get("dataCadastro"), 
+            (String) cadastro.get("leitor"), 
+            (String) cadastro.get("estado"), 
             code
         );
+    }
+
+    public static ObservableList<Material> getAcervoAlugado(){
+        JSONObject file = new JSONObject();
+        ArrayList<Material> acervo = new ArrayList<>();
+        JSONParser parser = new JSONParser();
+        try{
+            file = (JSONObject) parser.parse(new FileReader("src/data/Acervo.json"));
+            Set<String> names = file.keySet();
+            for(String s: names){
+                Material m = getMaterial(s);
+                if(!m.leitor.equals("")){
+                    acervo.add(m);
+                }
+                
+            }
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return FXCollections.observableArrayList(acervo);
     }
 
     public static void cadastroMaterial(Material mat){
@@ -203,8 +285,8 @@ public class JsonManager {
         material.put("nome", mat.nome);
         material.put("autor", mat.autor);
         material.put("categoria", mat.categoria);
-        material.put("data do cadastro", mat.dataCadastro);
-        material.put("Estado", mat.estado);
+        material.put("dataCadastro", mat.dataCadastro);
+        material.put("estado", mat.estado);
 
         try{
             file = (JSONObject) parser.parse(new FileReader("src/data/Acervo.json"));
@@ -231,5 +313,62 @@ public class JsonManager {
             System.out.println(e);
         }
         return FXCollections.observableArrayList(acervo);
+    }
+
+    public static void alugarMaterial(Material material, String login){
+        JSONObject file = new JSONObject(), cadastro, materialAlugado = new JSONObject();
+		JSONParser parser = new JSONParser();
+        FileWriter writeFile = null;
+        try{
+            file = (JSONObject) parser.parse(new FileReader("src/data/Membros.json"));
+            cadastro = (JSONObject) file.get(login);
+            materialAlugado.put("código", material.cod);
+            materialAlugado.put("dataAluguel", LocalDate.now().toString());
+            cadastro.put("materialAlugado", materialAlugado);
+            cadastro.put("estado", "Normal");
+            file.put(login, cadastro);
+            writeFile = new FileWriter("src/data/Membros.json");
+            writeFile.write(file.toJSONString());
+            writeFile.close();
+            
+            file = (JSONObject) parser.parse(new FileReader("src/data/Acervo.json"));
+            cadastro = (JSONObject) file.get(material.cod);
+            cadastro.put("estado", "Alugado");
+            file.put(material.cod, cadastro);
+            cadastro.put("leitor", login);
+            writeFile = new FileWriter("src/data/Acervo.json");
+            writeFile.write(file.toJSONString());
+            writeFile.close();
+
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
+    static public void devolverMaterial(Material material){
+        JSONObject file = new JSONObject(), cadastro, materialAlugado = new JSONObject();
+		JSONParser parser = new JSONParser();
+        FileWriter writeFile = null;
+        try{
+            file = (JSONObject) parser.parse(new FileReader("src/data/Membros.json"));
+            cadastro = (JSONObject) file.get(material.leitor);
+            cadastro.put("materialAlugado", new JSONObject());
+            file.put(material.leitor, cadastro);
+            writeFile = new FileWriter("src/data/Membros.json");
+            writeFile.write(file.toJSONString());
+            writeFile.close();
+            
+            file = (JSONObject) parser.parse(new FileReader("src/data/Acervo.json"));
+            cadastro = (JSONObject) file.get(material.cod);
+            cadastro.put("estado", "Disponível");
+            cadastro.put("leitor", "");
+            file.put(material.cod, cadastro);
+            writeFile = new FileWriter("src/data/Acervo.json");
+            writeFile.write(file.toJSONString());
+            writeFile.close();
+
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
 }
