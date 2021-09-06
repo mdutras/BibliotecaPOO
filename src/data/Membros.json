@@ -1,0 +1,17 @@
+{
+    "geni": {
+        "nome":"Genivaldo",
+        "senha":"BatataDoce",
+        "materialAlugado":
+            {
+                "código":"ROM0302",
+                "data do aluguel":"13/05/2021"
+            }
+    },
+    "bibi":{
+        "nome":"Gabrielle",
+        "senha":"Un1córn10",
+        "materialAlugado":{}
+    }
+    
+}

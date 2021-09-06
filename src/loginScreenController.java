@@ -1,4 +1,4 @@
-package views;
+package src;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -39,9 +39,9 @@ public class loginScreenController {
         System.out.println("login: " + login + " senha: "+ senha + " categoria: " + categoria);
         
         Stage stg = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Parent root = FXMLLoader.load(getClass().getResource("app.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../views/app.fxml"));
         Scene cena = new Scene(root);
-        cena.getStylesheets().add("style/main.css");;
+        cena.getStylesheets().add("style/main.css");
 
         stg.setScene(cena);
         stg.show();

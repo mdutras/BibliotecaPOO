@@ -44,7 +44,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.loginScreenController">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.loginScreenController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
@@ -55,7 +55,7 @@
             </Label>
             <Pane layoutY="21.0" prefHeight="360.0" prefWidth="641.0" styleClass="bg" stylesheets="@../style/main.css">
                <children>
-                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#404040" height="237.0" layoutX="135.0" layoutY="52.0" opacity="0.3" stroke="BLACK" strokeType="INSIDE" styleClass="rec" width="378.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="247.0" layoutX="146.0" layoutY="47.0" stroke="BLACK" strokeType="INSIDE" styleClass="rec" width="356.0" />
                   <TextField fx:id="loginField" layoutX="213.0" layoutY="87.0" prefHeight="24.0" prefWidth="215.0" promptText="Insira seu login" styleClass="geral" />
                   <Label layoutX="300.0" layoutY="68.0" prefHeight="19.0" prefWidth="41.0" text="Login">
                      <font>

@@ -11,9 +11,12 @@ lightGray: #c1c1c1;
 }
 
 .geral{
-    -fx-background-color: #404040;
+    -fx-background-color: red;
     -fx-text-fill: #FFF8E7;
     -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #FFF8E7;
 }
 
 .textField{
@@ -39,17 +42,24 @@ lightGray: #c1c1c1;
     -fx-arc-width:  25px;
 }
 
-.table-view{
+/* .table-view{
     -fx-text-fill: #FFF8E7;
-}
+} */
 
 .table-column{
-    -fx-background-color: #f3f3f3;
+    -fx-background-color:#f3f3f3;
     -fx-font-size: 12px;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
 }
 
-.table-row-cell:selected .text {
+.table-row-cell:hover .text {
         -fx-fill: red;
+}
+
+.selec .table-cell{
+    -fx-background-color:violet;
+    -fx-text-fill: red;
 }
 
 .column-header{
